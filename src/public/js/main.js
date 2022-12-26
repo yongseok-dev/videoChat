@@ -60,12 +60,19 @@ socket.addEventListener("close", handle.close);
 
 function handleMessageSubmit(e) {
   e.preventDefault();
+  if (sendMessageInput.value === "" || sendNicknameInput.value === "") {
+    return;
+  }
   handle.sendMessage();
   sendMessageInput.value = "";
 }
 
 function handleNickSubmit(e) {
   e.preventDefault();
+  if (sendNicknameInput.value === "") {
+    alert("닉네임을 입력해 주세요.");
+    return;
+  }
   handle.sendNickname();
 }
 

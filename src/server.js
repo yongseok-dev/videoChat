@@ -35,7 +35,7 @@ wss.on("connection", (socket) => {
   });
   socket.on("message", (message) => {
     const messageObject = JSON.parse(message);
-    if (messageObject.type === "message") {
+    if (messageObject.type === "message" && socket["nick"] !== undefined) {
       sockets.forEach((user) => {
         if (user && user.nick !== socket.nick) {
           user.send(
@@ -64,7 +64,15 @@ wss.on("connection", (socket) => {
             value: "이미 등록된 닉네임으로 등록 및 변경이 불가합니다.",
           })
         );
-        console.log(`${messageObject.value} >> 닉네임 중복`);
+      } else if (messageObject.value === "") {
+        //중복
+        socket.send(
+          JSON.stringify({
+            sender: socket.nick,
+            type: "nick",
+            value: "공백으로는 닉네임으로 등록 및 변경이 불가합니다.",
+          })
+        );
       } else if (!socket["nick"]) {
         //등록
         socket["nick"] = messageObject.value;
@@ -76,7 +84,6 @@ wss.on("connection", (socket) => {
             );
           }
         });
-        console.log(`${messageObject.value} >> 닉네임 등록`);
       } else {
         //변경
         let changeIndex;
@@ -92,7 +99,6 @@ wss.on("connection", (socket) => {
           }
         });
         socket["nick"] = messageObject.value;
-        console.log(`${messageObject.value} >> 닉네임 변경`);
       }
     }
   });
