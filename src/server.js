@@ -29,6 +29,7 @@ wss.on("connection", (socket) => {
   });
   socket.send("test message");
   socket.on("message", (message) => {
+    socket.send(`${message}`);
     console.log(`user>server >> ${message}`, message);
   });
 });
