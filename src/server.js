@@ -22,9 +22,15 @@ const server = http.createServer(app);
 
 const wss = new webSocket.Server({ server });
 
-function handleConnection(socket) {
-  console.log(socket);
-}
-wss.on("connection", handleConnection);
+wss.on("connection", (socket) => {
+  console.log("소켓 연결 됨", socket);
+  socket.on("close", () => {
+    console.log("소켓 연결 종료 됨");
+  });
+  socket.send("test message");
+  socket.on("message", (message) => {
+    console.log(`user>server >> ${message}`, message);
+  });
+});
 
 server.listen(port, handleListen);
