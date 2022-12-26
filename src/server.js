@@ -10,6 +10,9 @@ app.use("/public", express.static(__dirname + "/public"));
 app.get("/", (req, res, next) => {
   res.render("main");
 });
+app.get("/*", (req, res, next) => {
+  res.redirect("/");
+});
 
 const port = 3000;
 const handleListen = () => console.log(`SERVER: http:${port}`);
@@ -18,5 +21,10 @@ const handleListen = () => console.log(`SERVER: http:${port}`);
 const server = http.createServer(app);
 
 const wss = new webSocket.Server({ server });
+
+function handleConnection(socket) {
+  console.log(socket);
+}
+wss.on("connection", handleConnection);
 
 server.listen(port, handleListen);
