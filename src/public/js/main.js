@@ -16,10 +16,21 @@ const handle = {
   },
   message(message) {
     const messageObject = JSON.parse(message.data);
-    messageList.innerHTML +=
-      messageObject.type === "in"
-        ? `<li>${messageObject.sender} 님이 입장하였습니다.</li>`
-        : `<li>${messageObject.sender} >> ${messageObject.value}</li>`;
+    switch (messageObject.type) {
+      case "in":
+        messageList.innerHTML += `<li>${messageObject.sender} 님이 입장하였습니다.`;
+        break;
+      case "nick":
+        sendNicknameInput.value = messageObject.sender;
+        messageList.innerHTML += `<li>이미 등록된 닉네임으로 등록 및 변경이 불가합니다.</li>`;
+        break;
+      case "out":
+        messageList.innerHTML += `<li>${messageObject.sender} 님이 퇴장하였습니다.`;
+        break;
+      default:
+        messageList.innerHTML += `<li>${messageObject.sender} >> ${messageObject.value}</li>`;
+        break;
+    }
   },
   sendMessage() {
     messageList.innerHTML += `<li>나 >> ${sendMessageInput.value}</li>`;
@@ -52,10 +63,10 @@ function handleMessageSubmit(e) {
   handle.sendMessage();
   sendMessageInput.value = "";
 }
+
 function handleNickSubmit(e) {
   e.preventDefault();
   handle.sendNickname();
-  sendNicknameInput.disabled = true;
 }
 
 messageForm.addEventListener("submit", handleMessageSubmit);
