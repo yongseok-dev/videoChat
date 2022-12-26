@@ -10,8 +10,12 @@ html(lang="en")
         header
             h1 Video Chat 
         main
-            form
-                input(id="send" type="text")
+            form#nick
+                input(id="nickname" type="text" placeholder="닉네임")
+                button() 입력
+            ul
+            form#message
+                input(id="send" type="text" placeholder="메시지")
                 button() 전송
             ul
         script(src="/public/js/main.js")

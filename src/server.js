@@ -25,18 +25,31 @@ const wss = new webSocket.Server({ server });
 const sockets = [];
 
 wss.on("connection", (socket) => {
-  sockets.push(socket);
-  console.log("소켓 연결 됨", socket);
+  console.log("소켓 연결 됨");
   socket.on("close", () => {
     console.log("소켓 연결 종료 됨");
   });
   socket.on("message", (message) => {
-    sockets.forEach((asocket) => {
-      if (socket !== asocket) {
-        asocket.send(`${message}`);
-      }
-    });
-    console.log(`user>server >> ${message}`, message);
+    const messageObject = JSON.parse(message);
+    if (messageObject.type === "nick") {
+      console.log(`${messageObject.value}>server >> 닉네임 등록`);
+      sockets.push({ nick: messageObject.value, socket });
+      sockets.forEach((user) => {
+        if (user.nick !== messageObject.sender) {
+          user.socket.send(
+            JSON.stringify({ sender: messageObject.sender, type: "in" })
+          );
+        }
+      });
+    }
+    if (messageObject.type === "message") {
+      sockets.forEach((user) => {
+        if (user.nick !== messageObject.sender) {
+          user.socket.send(JSON.stringify(messageObject));
+        }
+      });
+      console.log(`${messageObject.sender}>server >> ${messageObject.value}`);
+    }
   });
 });
 
