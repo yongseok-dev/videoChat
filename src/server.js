@@ -22,14 +22,20 @@ const server = http.createServer(app);
 
 const wss = new webSocket.Server({ server });
 
+const sockets = [];
+
 wss.on("connection", (socket) => {
+  sockets.push(socket);
   console.log("소켓 연결 됨", socket);
   socket.on("close", () => {
     console.log("소켓 연결 종료 됨");
   });
-  socket.send("test message");
   socket.on("message", (message) => {
-    socket.send(`${message}`);
+    sockets.forEach((asocket) => {
+      if (socket !== asocket) {
+        asocket.send(`${message}`);
+      }
+    });
     console.log(`user>server >> ${message}`, message);
   });
 });
